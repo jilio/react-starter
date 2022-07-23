@@ -15,9 +15,9 @@
     "isolatedModules": true,
     "noEmit": true,
     "types": ["vite/client"],
-    "jsx": "react",
+    "jsx": "react-jsx",
     "baseUrl": "./src"
   },
-  "include": ["./src", "./relay.config.js"],
+  "include": ["./src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
