@@ -6,9 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint:fix": "eslint ./src --ext .js,.ts,.jsx,.tsx --quiet --fix --ignore-path ./.gitignore",
-    "lint:format": "prettier --loglevel warn --write \"./**/*.{js,ts,jsx,tsx,css,md,json}\"",
-    "lint": "npm run lint:format && npm run lint:fix"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "pre-commit": "lint",
   "dependencies": {
@@ -17,22 +16,14 @@
     "tailwindcss": "^3.1.6"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^0.25.2",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
-    "@typescript-eslint/eslint-plugin": "^5.30.7",
-    "@typescript-eslint/parser": "^5.30.7",
     "@vitejs/plugin-react": "^2.0.0",
     "autoprefixer": "^10.4.7",
     "eslint": "^8.20.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-jsx-a11y": "^6.6.1",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-react": "^7.30.1",
-    "eslint-plugin-simple-import-sort": "^7.0.0",
     "postcss": "^8.4.14",
     "pre-commit": "^1.2.2",
-    "prettier": "^2.7.1",
-    "prettier-plugin-tailwindcss": "^0.1.12",
     "typescript": "^4.7.4",
     "vite": "^3.0.2",
     "vite-tsconfig-paths": "^3.5.0"
