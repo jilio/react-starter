@@ -1,3 +1,7 @@
 {
-  "extends": "@antfu"
+  "extends": ["react-app", "prettier", "plugin:prettier/recommended"],
+  "plugins": ["prettier"],
+  "env": {
+    "browser": true
+  }
 }
