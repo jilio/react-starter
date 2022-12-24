@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "antfu.file-nesting",
+    "csstools.postcss",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint"
+  ]
+}
