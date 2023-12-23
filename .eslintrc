@@ -1,6 +1,6 @@
 {
   "extends": [
-    "react-app",
+    "airbnb",
     "prettier"
   ],
   "ignorePatterns": [
