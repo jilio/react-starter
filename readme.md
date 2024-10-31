@@ -1,5 +1,3 @@
 # react-starter
 
-Стартовый шаблон для создания приложений на React с Typescript и Vite, с подключенным TailwindCSS, ESLint и Prettier.
-
-Если нужны полифилы для модулей node, например, fs, buffer, process, то можно подключить [vite-plugin-node-polyfills](https://github.com/davidmyersdev/vite-plugin-node-polyfills).
+Стартовый шаблон для создания приложений на React с Typescript и [Vite](https://vite.dev), с подключенным [TailwindCSS](https://tailwindcss.com), [Biome](https://biomejs.dev).
