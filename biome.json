@@ -1,107 +1,54 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-	"vcs": {
-		"enabled": false,
-		"clientKind": "git",
-		"useIgnoreFile": false
-	},
-	"files": {
-		"ignoreUnknown": false,
-		"includes": ["**"]
-	},
-	"formatter": {
-		"enabled": true,
-		"useEditorconfig": true,
-		"formatWithErrors": false,
-		"indentStyle": "space",
-		"indentWidth": 2,
-		"lineEnding": "lf",
-		"lineWidth": 80,
-		"attributePosition": "auto",
-		"bracketSpacing": true
-	},
-	"assist": {
-		"actions": {
-			"source": {
-				"organizeImports": "on"
-			}
-		}
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"style": {
-				"useLiteralEnumMembers": "error",
-				"noCommaOperator": "error",
-				"useNodejsImportProtocol": "error",
-				"useAsConstAssertion": "error",
-				"useNumericLiterals": "error",
-				"useEnumInitializers": "error",
-				"useSelfClosingElements": "error",
-				"useConst": "error",
-				"useSingleVarDeclarator": "error",
-				"noUnusedTemplateLiteral": "error",
-				"useNumberNamespace": "error",
-				"noInferrableTypes": "error",
-				"useExponentiationOperator": "error",
-				"useTemplate": "error",
-				"noParameterAssign": "error",
-				"noNonNullAssertion": "error",
-				"useDefaultParameterLast": "error",
-				"noArguments": "error",
-				"useImportType": "error",
-				"useExportType": "error",
-				"noUselessElse": "error",
-				"useShorthandFunctionType": "error"
-			},
-			"suspicious": {
-				"noArrayIndexKey": "error",
-				"noAsyncPromiseExecutor": "error",
-				"noCatchAssign": "error",
-				"noClassAssign": "error",
-				"noCommentText": "error",
-				"noCompareNegZero": "error",
-				"noConsole": "warn",
-				"noControlCharactersInRegex": "error",
-				"noDebugger": "error",
-				"noDoubleEquals": "error",
-				"noDuplicateCase": "error",
-				"noDuplicateClassMembers": "error",
-				"noDuplicateJsxProps": "error",
-				"noDuplicateObjectKeys": "error",
-				"noDuplicateParameters": "error",
-				"noEmptyBlockStatements": "error",
-				"noFallthroughSwitchClause": "error",
-				"noFunctionAssign": "error",
-				"noGlobalAssign": "error",
-				"noImportAssign": "error",
-				"noLabelVar": "error",
-				"noMisleadingCharacterClass": "error",
-				"noPrototypeBuiltins": "error",
-				"noRedeclare": "error",
-				"noSelfCompare": "error",
-				"noShadowRestrictedNames": "error",
-				"noSparseArray": "error",
-				"noUnsafeNegation": "error",
-				"useAwait": "off",
-				"useDefaultSwitchClauseLast": "error",
-				"useGetterReturn": "error",
-				"useValidTypeof": "error",,,,,,,,,,,,,,,,
-			}
-		},
-		"includes": ["**", "!**/dist/**/*"]
-	},
-	"javascript": {
-		"formatter": {
-			"jsxQuoteStyle": "double",
-			"quoteProperties": "asNeeded",
-			"trailingCommas": "es5",
-			"semicolons": "asNeeded",
-			"arrowParentheses": "always",
-			"bracketSameLine": false,
-			"quoteStyle": "single",
-			"attributePosition": "auto",
-			"bracketSpacing": true
-		}
-	}
+  "$schema": "https://biomejs.dev/schemas/2.2.3/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git"
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": ["**", "!**/dist"]
+  },
+  "formatter": {
+    "enabled": true,
+    "useEditorconfig": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 80,
+    "attributePosition": "auto",
+    "bracketSpacing": true
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noConsole": "warn"
+      },
+      "style": {
+        "useSelfClosingElements": "error"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "es5",
+      "semicolons": "asNeeded",
+      "arrowParentheses": "always",
+      "bracketSameLine": false,
+      "quoteStyle": "single",
+      "attributePosition": "auto",
+      "bracketSpacing": true
+    }
+  }
 }
