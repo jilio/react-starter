@@ -15,13 +15,14 @@
 src/
   app/        — app entry, providers, global styles
   pages/      — full page components
+  widgets/    — composite UI blocks combining features/entities
   features/   — user interactions / use cases
   entities/   — business entities
   shared/     — reusable utilities, UI kit, API clients
 ```
 
 **Import rule:** layers can only import from layers below them:
-`app → pages → features → entities → shared`
+`app → pages → widgets → features → entities → shared`
 
 Each layer uses `index.ts` as its public API. Never import from internal paths of another layer.
 
