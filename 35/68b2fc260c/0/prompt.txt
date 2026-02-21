@@ -1,0 +1,229 @@
+Implement the following plan:
+
+# Plan: Update React Starter Template + Move Skill Into Repo
+
+## Context
+
+The `web-project-initializer` skill currently scaffolds projects manually: runs `bun init --react=shadcn`, deletes demo files, then writes template files one by one. This is fragile and slow. The goal is to make the GitHub template repo (`jilio/react-starter`) the single source of truth — including the skill itself — then simplify the skill to just `bunx degit`.
+
+The template at `/Users/me/dev/jilio-react-starter` is outdated — it uses Vite, has no FSD structure, no Effector, no shadcn, no Sentry, no Zod.
+
+---
+
+## Part 1: Template Repository Changes
+
+### 1.1 Delete files
+
+- `vite.config.mts` — Vite removed
+- `tsconfig.node.json` — only existed for Vite config
+- `index.html` (root level) — moves into `src/`
+- `src/App.tsx` — replaced by FSD `src/app/App.tsx`
+- `src/main.tsx` — replaced by `src/app/main.tsx`
+- `src/index.css` — replaced by `src/app/styles/globals.css`
+- `bun.lock` — will be regenerated
+
+### 1.2 Modify existing files
+
+**`package.json`** — Remove Vite deps (`vite`, `@vitejs/plugin-react`, `vite-tsconfig-paths`, `@tailwindcss/vite`). Add new deps:
+- Production: `effector`, `effector-react`, `@sentry/react`, `@sentry/bun`, `zod`, `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react`
+- Dev: keep `@biomejs/biome`, `@tailwindcss/postcss`, `tailwindcss`, `typescript`, `@types/react`, `@types/react-dom`
+- Scripts: `dev` → `bun --hot src/index.ts`, `build` → `bun build src/index.ts --target=bun --outdir=dist`, `start` → `NODE_ENV=production bun src/index.ts`, add `typecheck` and `lint`/`lint:fix`
+
+**`tsconfig.json`** — Change `types` from `["vite/client"]` to `["bun-types"]`. Change `baseUrl` from `"./src"` to `"."`. Add `paths: { "@/*": ["./src/*"] }`. Remove `references` array.
+
+**`biome.json`** — Two changes:
+1. Add `"!**/src/shared/ui/components/**"` to `files.includes` (ignore auto-generated shadcn components)
+2. Add strict type safety rules:
+   - `suspicious.noNonNullAssertion`: `"error"` — bans `!` non-null assertions
+   - `suspicious.noExplicitAny`: `"error"` — bans `any` type
+
+**`.gitignore`** — Remove Yarn/PnP entries, add `.env.local`, `.env.*.local`, `.DS_Store`.
+
+**`.vscode/extensions.json`** — Remove `esbenp.prettier-vscode`.
+
+**`readme.md`** — Rewrite in English documenting new stack, FSD structure, and conventions.
+
+### 1.3 Create new files
+
+**Config files (project root):**
+- `postcss.config.mjs` — `@tailwindcss/postcss` plugin (replaces `@tailwindcss/vite`)
+- `components.json` — shadcn/ui config: `aliases.ui` → `@/shared/ui/components`, `aliases.utils` → `@/shared/lib/utils`, `rsc: false`
+- `.env.example` — `BUN_PUBLIC_SENTRY_DSN=`, `SENTRY_DSN=`, `NODE_ENV=development`
+
+**Server + client entry:**
+- `src/index.ts` — `Bun.serve()` with `@sentry/bun` init, HTML import, `/api/health` route, HMR in dev
+- `src/index.html` — `<script>` pointing to `./app/main.tsx`
+
+**FSD `app/` layer:**
+- `src/app/main.tsx` — `@sentry/react` init with `browserTracingIntegration`, `createRoot` with Sentry error handlers
+- `src/app/App.tsx` — `Sentry.ErrorBoundary` wrapping `<HomePage />`
+- `src/app/styles/globals.css` — `@import "tailwindcss"` + border-color compat layer
+
+**FSD `pages/` layer:**
+- `src/pages/home/ui/HomePage.tsx` — minimal starter page
+- `src/pages/home/index.ts` — public API export
+- `src/pages/index.ts` — re-exports
+
+**FSD `shared/` layer:**
+- `src/shared/lib/utils.ts` — `cn()` helper (clsx + tailwind-merge, required by shadcn)
+- `src/shared/lib/index.ts` — re-export
+- `src/shared/ui/index.ts` — re-export
+- `src/shared/index.ts` — re-export
+
+**Placeholder dirs (`.gitkeep`):**
+- `src/features/`, `src/entities/`, `src/shared/ui/components/`, `src/shared/lib/hooks/`, `src/shared/api/`
+
+**Project conventions (`CLAUDE.md` at project root):**
+- Document "no `as` type assertions" convention (Biome cannot enforce this, so it's a documented rule for the AI agent)
+- Document "use Zod for runtime type validation instead of type assertions"
+- Document FSD import rules
+- Document Effector naming conventions (`$store`, `effectFx`)
+
+### 1.4 Skill in the repo
+
+Move the skill into the template repo at `.claude/skills/web-project-initializer/SKILL.md`. Delete the old global copy at `~/.claude/skills/web-project-initializer/` (including `templates/` and `reference/` directories). Symlink from global to repo:
+
+```
+~/.claude/skills/web-project-initializer → /Users/me/dev/jilio-react-starter/.claude/skills/web-project-initializer
+```
+
+The new `SKILL.md` has 4 simple steps:
+1. `bunx degit jilio/react-starter <project-name>`
+2. `cd <project-path> && bun install`
+3. `cp .env.example .env`
+4. Confirm completion with project location + commands
+
+Plus reference sections for FSD structure, commands, and conventions.
+
+### 1.5 Final directory structure
+
+```
+jilio-react-starter/
+├── .claude/
+│   └── skills/
+│       └── web-project-initializer/
+│           └── SKILL.md
+├── .vscode/
+│   ├── extensions.json
+│   └── settings.json
+├── src/
+│   ├── app/
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   └── styles/globals.css
+│   ├── pages/
+│   │   ├── index.ts
+│   │   └── home/
+│   │       ├── index.ts
+│   │       └── ui/HomePage.tsx
+│   ├── features/.gitkeep
+│   ├── entities/.gitkeep
+│   ├── shared/
+│   │   ├── index.ts
+│   │   ├── ui/
+│   │   │   ├── index.ts
+│   │   │   └── components/.gitkeep
+│   │   ├── lib/
+│   │   │   ├── index.ts
+│   │   │   ├── utils.ts
+│   │   │   └── hooks/.gitkeep
+│   │   └── api/.gitkeep
+│   ├── index.html
+│   └── index.ts
+├── .env.example
+├── .gitignore
+├── biome.json
+├── CLAUDE.md
+├── components.json
+├── package.json
+├── postcss.config.mjs
+├── readme.md
+└── tsconfig.json
+```
+
+---
+
+## Part 2: Implementation Order
+
+### Phase 1: Clean up template
+1. Delete: `vite.config.mts`, `tsconfig.node.json`, `index.html` (root), `src/App.tsx`, `src/main.tsx`, `src/index.css`, `bun.lock`
+
+### Phase 2: Update config files
+2. Rewrite `package.json` (remove Vite deps, add new deps, update scripts)
+3. Update `tsconfig.json` (bun-types, @/ paths, remove references)
+4. Update `biome.json` (shadcn ignore, noNonNullAssertion, noExplicitAny)
+5. Update `.gitignore`
+6. Update `.vscode/extensions.json`
+7. Create `postcss.config.mjs`
+8. Create `components.json`
+9. Create `.env.example`
+10. Create `CLAUDE.md`
+
+### Phase 3: Create FSD structure
+11. Create directory structure (mkdir -p for all FSD dirs)
+12. Create `src/index.ts` (Bun server + Sentry)
+13. Create `src/index.html`
+14. Create `src/app/main.tsx` (client entry + Sentry React)
+15. Create `src/app/App.tsx`
+16. Create `src/app/styles/globals.css`
+17. Create page files (`src/pages/home/...`)
+18. Create shared files (`src/shared/lib/utils.ts`, index files)
+19. Create `.gitkeep` files
+
+### Phase 4: Move skill into repo
+20. Create `.claude/skills/web-project-initializer/SKILL.md` in the template repo
+21. Delete `~/.claude/skills/web-project-initializer/` (all files)
+22. Symlink `~/.claude/skills/web-project-initializer` → repo path
+
+### Phase 5: Install and verify
+23. `bun install` — regenerate lockfile
+24. Rewrite `readme.md`
+
+---
+
+## Verification
+
+1. `bun install` — deps install without errors
+2. `bun run typecheck` — TypeScript passes
+3. `bun run lint` — Biome passes (and enforces noNonNullAssertion, noExplicitAny)
+4. `bun dev` — server starts at localhost:3000, page renders
+5. `bunx shadcn@canary add button` — installs to `src/shared/ui/components/button.tsx`
+6. After pushing to GitHub: `bunx degit jilio/react-starter test-app && cd test-app && bun install && bun dev` works end-to-end
+
+---
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `/Users/me/dev/jilio-react-starter/package.json` | Central deps manifest — complete rewrite |
+| `/Users/me/dev/jilio-react-starter/tsconfig.json` | Path alias `@/` critical for FSD + shadcn |
+| `/Users/me/dev/jilio-react-starter/biome.json` | Strict type rules + shadcn ignore |
+| `/Users/me/dev/jilio-react-starter/CLAUDE.md` | "No `as`" convention + Zod guidance |
+| `/Users/me/dev/jilio-react-starter/src/index.ts` | Bun server entry (replaces Vite) |
+| `/Users/me/dev/jilio-react-starter/src/app/main.tsx` | Client entry with Sentry React |
+| `/Users/me/dev/jilio-react-starter/.claude/skills/web-project-initializer/SKILL.md` | Simplified skill using degit |
+| `/Users/me/.claude/skills/web-project-initializer/` | Delete (replaced by symlink to repo) |
+
+
+If you need specific details from before exiting plan mode (like exact code snippets, error messages, or content you generated), read the full transcript at: /Users/me/.claude/projects/-Users-me-dev-jilio-react-starter/f5f1857f-f864-4857-b6e7-739a9eb576a7.jsonl
+
+---
+
+why zod 3?
+
+---
+
+=/ wtf?
+
+---
+
+so you wanna say it works?
+
+---
+
+it's not working, blank screen. if you unable to detect it - add playwright test
+
+---
+
+[Request interrupted by user for tool use]
