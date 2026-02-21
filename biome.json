@@ -1,12 +1,19 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git"
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!**/dist"]
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/src/shared/ui/components",
+      "!**/tests",
+      "!**/test-results",
+      "!**/playwright-report"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -31,9 +38,11 @@
     "rules": {
       "recommended": true,
       "suspicious": {
-        "noConsole": "warn"
+        "noConsole": "warn",
+        "noExplicitAny": "error"
       },
       "style": {
+        "noNonNullAssertion": "error",
         "useSelfClosingElements": "error"
       }
     }

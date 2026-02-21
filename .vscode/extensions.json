@@ -3,7 +3,6 @@
     "antfu.file-nesting",
     "csstools.postcss",
     "bradlc.vscode-tailwindcss",
-    "esbenp.prettier-vscode",
     "biomejs.biome"
   ]
 }
