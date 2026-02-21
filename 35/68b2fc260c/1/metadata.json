@@ -1,13 +1,14 @@
 {
   "cli_version": "0.4.5",
   "checkpoint_id": "3568b2fc260c",
+  "session_id": "bd3ae87d-fa6a-4d62-b299-ffa2f8c7a516",
   "strategy": "manual-commit",
+  "created_at": "2026-02-21T03:21:40.657008Z",
   "branch": "main",
-  "checkpoints_count": 8,
+  "checkpoints_count": 4,
   "files_touched": [
     ".env.example",
     ".gitignore",
-    ".vscode/extensions.json",
     "CLAUDE.md",
     "biome.json",
     "bunfig.toml",
@@ -15,7 +16,6 @@
     "index.html",
     "package.json",
     "playwright.config.ts",
-    "readme.md",
     "src/App.tsx",
     "src/app/App.tsx",
     "src/app/main.tsx",
@@ -37,31 +37,26 @@
     "src/shared/ui/components/.gitkeep",
     "src/shared/ui/index.ts",
     "tests/homepage.spec.ts",
-    "tsconfig.json",
     "tsconfig.node.json",
     "vite.config.mts"
   ],
-  "sessions": [
-    {
-      "metadata": "/35/68b2fc260c/0/metadata.json",
-      "transcript": "/35/68b2fc260c/0/full.jsonl",
-      "context": "/35/68b2fc260c/0/context.md",
-      "content_hash": "/35/68b2fc260c/0/content_hash.txt",
-      "prompt": "/35/68b2fc260c/0/prompt.txt"
-    },
-    {
-      "metadata": "/35/68b2fc260c/1/metadata.json",
-      "transcript": "/35/68b2fc260c/1/full.jsonl",
-      "context": "/35/68b2fc260c/1/context.md",
-      "content_hash": "/35/68b2fc260c/1/content_hash.txt",
-      "prompt": "/35/68b2fc260c/1/prompt.txt"
-    }
-  ],
+  "agent": "Claude Code",
+  "turn_id": "4a10fd12288f",
   "token_usage": {
-    "input_tokens": 157,
-    "cache_creation_tokens": 139272,
-    "cache_read_tokens": 8910539,
-    "output_tokens": 19863,
-    "api_call_count": 133
-  }
+    "input_tokens": 92,
+    "cache_creation_tokens": 58916,
+    "cache_read_tokens": 5292919,
+    "output_tokens": 11111,
+    "api_call_count": 78
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-21T03:21:40.518907Z",
+    "agent_lines": 274,
+    "human_added": 206,
+    "human_modified": 1,
+    "human_removed": 0,
+    "total_committed": 480,
+    "agent_percentage": 57.08333333333333
+  },
+  "transcript_path": ".claude/projects/-Users-me-dev-jilio-react-starter/bd3ae87d-fa6a-4d62-b299-ffa2f8c7a516.jsonl"
 }
