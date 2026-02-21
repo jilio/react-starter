@@ -1,0 +1,172 @@
+Implement the following plan:
+
+# Plan: Fix blank screen + add Playwright test
+
+## Context
+
+The dev server starts but shows a blank screen in the browser. Root cause: `src/index.ts` reads the HTML file as raw text with `Bun.file().text()` and returns it as a plain `Response`. The browser gets the HTML, sees `<script type="module" src="./app/main.tsx">`, tries to fetch `./app/main.tsx` — but no route serves that file. The server returns the same HTML for every request.
+
+**Fix:** Use Bun's HTML import feature (`import html from './index.html'`) with the `routes` API. Bun will automatically scan the HTML for `<script>` tags, bundle the referenced `.tsx` files, serve them as static assets, and enable HMR in dev mode.
+
+---
+
+## Step 1: Rewrite `src/index.ts` to use Bun HTML imports + routes API
+
+**File:** `/Users/me/dev/jilio-react-starter/src/index.ts`
+
+Replace the current `Bun.file().text()` approach with:
+
+```ts
+import * as Sentry from '@sentry/bun'
+import html from './index.html'
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  tracesSampleRate: 1.0,
+})
+
+const server = Bun.serve({
+  port: 3000,
+  development: process.env.NODE_ENV !== 'production' && {
+    hmr: true,
+    console: true,
+  },
+  routes: {
+    '/': html,
+    '/api/health': {
+      GET() {
+        return Response.json({ status: 'ok' })
+      },
+    },
+  },
+  fetch(req) {
+    return new Response('Not Found', { status: 404 })
+  },
+})
+
+// biome-ignore lint/suspicious/noConsole: startup log
+console.info(`Server running at ${server.url}`)
+```
+
+Key changes:
+- `import html from './index.html'` — triggers Bun's bundler to process the HTML and all referenced scripts
+- `routes` object — replaces manual `fetch()` routing
+- `development` with `hmr: true` — enables hot module reloading
+- Bun automatically serves bundled JS/CSS assets
+
+## Step 2: Add Playwright test
+
+### 2a. Install Playwright
+
+```bash
+bun add -d @playwright/test
+bunx playwright install chromium
+```
+
+### 2b. Create `playwright.config.ts`
+
+```ts
+import { defineConfig, devices } from '@playwright/test'
+
+export default defineConfig({
+  testDir: './tests',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  use: {
+    baseURL: 'http://localhost:3000',
+  },
+  webServer: {
+    command: 'bun --hot src/index.ts',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+    timeout: 10_000,
+  },
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
+})
+```
+
+### 2c. Create `tests/homepage.spec.ts`
+
+```ts
+import { expect, test } from '@playwright/test'
+
+test('homepage renders', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('h1')).toHaveText('Hello, world')
+})
+```
+
+### 2d. Add test script to `package.json`
+
+```json
+"test": "playwright test"
+```
+
+### 2e. Update `biome.json` to ignore `tests/` or add Playwright globals handling
+
+Add `"!**/tests"` to biome ignores, or leave as-is since Playwright imports are explicit.
+
+## Step 3: Update `.gitignore`
+
+Add Playwright artifacts:
+```
+test-results/
+playwright-report/
+```
+
+## Verification
+
+1. `bun run typecheck` — passes
+2. `bun run lint` — passes
+3. `bun run test` — Playwright starts server, opens Chromium, verifies "Hello, world" renders
+
+
+If you need specific details from before exiting plan mode (like exact code snippets, error messages, or content you generated), read the full transcript at: /Users/me/.REDACTED.jsonl
+
+---
+
+no tailwind styles
+
+---
+
+<task-notification>
+<task-id>b05fd3c</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>/private/tmp/claude-501/-Users-me-dev-jilio-react-starter/tasks/b05fd3c.output</output-file>
+<status>completed</status>
+<summary>Background command "Start dev server in background" completed (exit code 0)</summary>
+</task-notification>
+Read the output file to retrieve the result: /private/tmp/claude-501/-Users-me-dev-jilio-react-starter/tasks/b05fd3c.output
+
+---
+
+do you think we good? ready to commit?
+
+---
+
+yes, remove postcss config, gitignore .claude and .entire
+
+---
+
+## Project Structure (FSD)
+
+```
+src/
+  app/          — entry point, providers, global styles
+  pages/        — full page components
+  features/     — user interactions / use cases
+  entities/     — business entities
+  shared/       — reusable UI, utilities, API clients
+```
+
+widgets are missing
+
+---
+
+commit and push
